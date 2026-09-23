@@ -473,53 +473,223 @@ ul{margin:0;padding:0;list-style:none}
 /* ══ 05 · about ════════════════════════════════════════════════════════════ */
 .about{
   background:var(--paper);color:var(--ink);padding:10vh var(--pad) 14vh;
-  display:grid;grid-template-columns:1.75fr 1fr;gap:clamp(30px,6vw,120px);align-items:start;
+  display:block;
 }
-.about__lede{
-  margin:0 0 1.2em;font-size:clamp(19px,2.3vw,46px);line-height:1.18;
-  letter-spacing:-.026em;font-weight:500;
+/* the section title, in the hero's face */
+.about__t{
+  margin:0 0 clamp(20px,2.4vw,44px);
+  font-size:clamp(38px,7vw,132px);
 }
-.about__lede em{font-family:var(--serif);font-style:italic;font-size:1.1em;font-weight:400}
-.about__body{
-  margin:0 0 1.25em;font-size:clamp(12px,1vw,18px);line-height:1.6;letter-spacing:-.008em;
-  max-width:58ch;
-}
-/* the figure carries its own air at the top, so the column sits higher than the
-   text beside it */
-.about__side{margin-top:clamp(-52px,-2.8vw,-14px)}
-.about__k{margin:0 0 .9em;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
-  text-transform:uppercase;opacity:.45}
-.about__k--2{margin-top:3.2em}
-.wheres li{
-  font-size:clamp(12px,1.02vw,19px);line-height:1.5;letter-spacing:-.012em;padding:.42em 0;display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid rgba(11,11,12,.13)}
-.wheres i{width:7px;height:7px;border:1px solid currentColor;border-radius:50%;opacity:.5}
 
-/* ── the numbers, and a clock that knows where I am ──────────────────────── */
-.nowrow{
-  margin:clamp(34px,4.4vw,80px) 0 0;
-  border-top:1px solid rgba(11,11,12,.16);
-  padding-top:clamp(20px,2.2vw,40px);
+/* ── the desktop ─────────────────────────────────────────────────────────
+   The About copy sits inside a machine: a lid, a screen with a wallpaper, two
+   apps and one window open at a time. It reads as an object on the paper rather
+   than as another column of text. */
+.mac{max-width:min(100%,1060px);margin-inline:auto}
+.mac__lid{
+  background:#141417;border-radius:clamp(7px,.8vw,14px);
+  padding:clamp(7px,.7vw,13px) clamp(7px,.7vw,13px) clamp(12px,1.25vw,24px);
+  box-shadow:0 34px 70px rgba(11,11,12,.3),0 3px 10px rgba(11,11,12,.2);
 }
-.now{
-  display:flex;align-items:center;gap:clamp(9px,.9vw,16px);flex-wrap:wrap;
-  margin-top:clamp(24px,3vw,52px);
-  padding:clamp(11px,1.05vw,19px) clamp(15px,1.4vw,26px);
-  border:1px solid rgba(11,11,12,.18);border-radius:99px;width:fit-content;
-  font-family:var(--mono);font-size:clamp(9px,.68vw,12px);letter-spacing:.1em;
+.mac__screen{
+  position:relative;border-radius:clamp(3px,.35vw,6px);overflow:hidden;
+  aspect-ratio:16/9;display:flex;flex-direction:column;background:#0A0A0B;
 }
-.now__dot{
-  width:8px;height:8px;border-radius:50%;background:var(--acid);flex:0 0 auto;
-  box-shadow:0 0 0 0 rgba(198,242,78,.75);animation:pulse 2.4s var(--e-out) infinite;
+.mac__bar{
+  flex:0 0 auto;display:flex;align-items:center;gap:14px;
+  padding:0 clamp(10px,1vw,18px);height:clamp(24px,2.4vw,38px);
+  background:rgba(242,241,236,.055);border-bottom:1px solid rgba(242,241,236,.08);
+  font-family:var(--mono);font-size:clamp(7.5px,.56vw,10px);letter-spacing:.11em;
+  color:rgba(242,241,236,.45);
 }
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(198,242,78,.7)}
-  70%{box-shadow:0 0 0 11px rgba(198,242,78,0)}
-  100%{box-shadow:0 0 0 0 rgba(198,242,78,0)}
+.mac__dots{display:flex;gap:5px}
+.mac__dots i{width:7px;height:7px;border-radius:50%;background:rgba(242,241,236,.22)}
+.mac__dots i:first-child{background:#FF6B5B}
+.mac__name{flex:1;text-align:center}
+.mac__clock{font-variant-numeric:tabular-nums;color:rgba(242,241,236,.7)}
+
+/* the hinge and the deck, so it reads as a machine and not a floating panel */
+.mac__hinge{
+  height:clamp(5px,.5vw,9px);width:88%;margin:0 auto;
+  background:linear-gradient(#1C1C20,#101013);
+  border-radius:0 0 3px 3px;
 }
-.now__time{font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.06em}
-.now__where,.now__state{opacity:.55}
-.now__sep{width:1px;height:12px;background:currentColor;opacity:.22}
+.mac__base{
+  position:relative;height:clamp(8px,.85vw,15px);
+  background:linear-gradient(#202024,#141417);
+  border-radius:0 0 clamp(8px,.9vw,16px) clamp(8px,.9vw,16px);
+  box-shadow:0 16px 30px rgba(11,11,12,.26);
+}
+.mac__base span{
+  position:absolute;left:50%;top:0;transform:translateX(-50%);
+  width:12%;height:clamp(3px,.3vw,5px);
+  background:#0C0C0E;border-radius:0 0 5px 5px;
+}
+
+/* wallpaper: two soft lights over a dot grid, so it reads as a screen not a panel */
+.mac__desk{
+  position:relative;flex:1;min-height:0;
+  padding:clamp(14px,1.5vw,26px);display:flex;gap:clamp(14px,1.6vw,28px);
+  background:
+    radial-gradient(120% 95% at 80% 6%, rgba(198,242,78,.12), transparent 58%),
+    radial-gradient(95% 75% at 4% 104%, rgba(124,142,255,.13), transparent 60%),
+    #09090A;
+}
+.mac__desk::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(rgba(242,241,236,.11) 1px, transparent 1px);
+  background-size:22px 22px;
+}
+.mac__apps{
+  position:relative;z-index:2;flex:0 0 auto;
+  display:flex;flex-direction:column;gap:clamp(12px,1.3vw,22px);
+}
+.dapp{
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  width:clamp(58px,5.6vw,92px);padding:0;
+  font-family:var(--mono);font-size:clamp(7px,.52vw,9.5px);letter-spacing:.07em;
+  color:rgba(242,241,236,.62);transition:color .35s var(--e-out);
+}
+.dapp__i{
+  width:100%;aspect-ratio:1;display:grid;place-items:center;
+  border-radius:clamp(11px,1.15vw,20px);
+  background:linear-gradient(150deg,rgba(242,241,236,.13),rgba(242,241,236,.05));
+  border:1px solid rgba(242,241,236,.14);
+  transition:.4s var(--e-out);
+}
+.dapp__i svg{
+  width:52%;height:52%;fill:none;stroke:rgba(242,241,236,.8);
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+.dapp:hover .dapp__i{transform:translateY(-3px);border-color:rgba(242,241,236,.3)}
+.dapp.on{color:var(--ink)}
+.dapp.on .dapp__i{
+  background:linear-gradient(150deg,var(--acid),#A9D93B);border-color:transparent;
+  box-shadow:0 10px 26px rgba(198,242,78,.22);
+}
+.dapp.on .dapp__i svg{stroke:var(--black)}
+.dapp.on .dapp__n{color:var(--acid)}
+.dapp__n{transition:color .35s var(--e-out)}
+
+/* one window at a time, and it never pushes the layout around */
+.win{
+  position:relative;z-index:2;flex:1;min-width:0;
+  display:flex;flex-direction:column;
+  border-radius:clamp(6px,.6vw,11px);overflow:hidden;
+  background:rgba(14,14,16,.82);border:1px solid rgba(242,241,236,.13);
+  box-shadow:0 20px 50px rgba(0,0,0,.45);
+  opacity:0;transform:scale(.97) translateY(8px);pointer-events:none;
+  transition:opacity .42s var(--e-out),transform .42s var(--e-out);
+}
+.win.on{opacity:1;transform:none;pointer-events:auto}
+.win + .win{position:absolute;inset:clamp(14px,1.5vw,26px) clamp(14px,1.5vw,26px)
+  clamp(14px,1.5vw,26px) calc(clamp(58px,5.6vw,92px) + clamp(28px,3.1vw,54px))}
+.win__bar{
+  flex:0 0 auto;display:flex;align-items:center;gap:10px;
+  padding:0 clamp(10px,1vw,16px);height:clamp(22px,2.2vw,34px);
+  background:rgba(242,241,236,.07);border-bottom:1px solid rgba(242,241,236,.09);
+  font-family:var(--mono);font-size:clamp(7px,.54vw,9.5px);letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(242,241,236,.5);
+}
+.win__x{
+  width:8px;height:8px;border-radius:50%;background:#FF6B5B;flex:0 0 auto;
+  cursor:pointer;transition:transform .3s var(--e-out);
+}
+.win__x:hover{transform:scale(1.25)}
+.win__body{
+  flex:1;min-height:0;overflow:auto;
+  padding:clamp(14px,1.6vw,30px) clamp(14px,1.7vw,32px);color:var(--paper);
+}
+/* About and Location use split views; Currently is a concise status readout. */
+.win__body--about,.win__body--loc{
+  display:grid;grid-template-columns:1.12fr .88fr;gap:clamp(18px,2.2vw,46px);
+  align-items:stretch;
+}
+.win__body--now{display:flex;flex-direction:column;min-height:100%}
+.win__col{min-width:0;display:flex;flex-direction:column}
+.win__col--fig{align-items:center}
+.win__col--globe{align-items:center;justify-content:center}
+.globe{display:block;width:min(100%,340px);aspect-ratio:1}
+.globe__co{
+  margin:clamp(8px,.9vw,16px) 0 0;font-family:var(--mono);
+  font-size:clamp(8px,.62vw,11.5px);letter-spacing:.2em;color:var(--acid);opacity:.85;
+}
+.globe__note{
+  margin:clamp(16px,1.8vw,30px) 0 0;font-size:clamp(10px,.8vw,15px);line-height:1.6;
+  color:rgba(242,241,236,.5);
+}
+.globe__note em{font-style:normal;color:rgba(242,241,236,.85)}
+.win__k{
+  margin:0 0 .9em;font-family:var(--mono);font-size:clamp(6.5px,.5vw,9.5px);
+  letter-spacing:.2em;text-transform:uppercase;color:rgba(242,241,236,.38);
+}
+.win__k--2{margin-top:clamp(14px,1.6vw,28px)}
+
+/* the pattern piece, relit for a dark screen */
+.win .fig{width:min(100%,300px)}
+.win .fig__fill{fill:url(#figGD)}
+.win .fig__stitch{stroke:rgba(242,241,236,.34)}
+.win .fig__x path{stroke:rgba(242,241,236,.38)}
+.win .fig__x.on path{stroke:var(--acid)}
+.win .fig__t text{fill:var(--paper)}
+.win .fig__labels:hover .fig__t text{fill-opacity:.3}
+.win .fig__labels:hover .fig__t.on text{fill-opacity:1}
+.win .fig__cap{color:rgba(242,241,236,.5);text-align:center}
+.win .wheres li{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:clamp(11px,.88vw,16.5px);padding:.5em 0;
+  border-bottom:1px solid rgba(242,241,236,.11);color:rgba(242,241,236,.8);
+}
+.win .wheres i{opacity:.4}
+.win__lede{
+  margin:0 0 1em;font-size:clamp(14px,1.34vw,26px);line-height:1.26;
+  letter-spacing:-.022em;font-weight:500;
+}
+.win__lede em{font-family:var(--serif);font-style:italic;font-size:1.1em;font-weight:400}
+.win__p{
+  margin:0 0 .95em;font-size:clamp(11px,.94vw,17.5px);line-height:1.6;
+  letter-spacing:-.005em;color:rgba(242,241,236,.66);
+}
+.win__p:last-child{margin-bottom:0}
+
+/* the Currently window */
+.now__k{
+  margin:0 0 .5em;font-family:var(--mono);font-size:clamp(7px,.54vw,10px);
+  letter-spacing:.24em;text-transform:uppercase;color:rgba(242,241,236,.4);
+}
+.now__big{
+  margin:0;font-family:var(--sans);font-weight:900;
+  font-size:clamp(30px,3.9vw,72px);line-height:1;letter-spacing:-.045em;
+  font-variant-numeric:tabular-nums;
+  background:linear-gradient(97deg,var(--acid),#8FA8FF 62%,#C9A2FF);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.now__big em{font-style:normal;font-size:.44em;letter-spacing:-.02em;margin-left:.12em}
+.now__where{
+  margin:.5em 0 0;font-family:var(--mono);font-size:clamp(7.5px,.56vw,10.5px);
+  letter-spacing:.17em;text-transform:uppercase;color:rgba(242,241,236,.45);
+}
+.now__rows{margin:clamp(28px,3vw,54px) 0 0}
+.now__rows > div{
+  display:grid;grid-template-columns:clamp(74px,7vw,126px) 1fr;
+  gap:clamp(10px,1.1vw,20px);align-items:baseline;
+  padding:clamp(13px,1.2vw,22px) 0;border-top:1px solid rgba(242,241,236,.12);
+}
+.now__rows dt{
+  font-family:var(--mono);font-size:clamp(6.5px,.5vw,9px);letter-spacing:.15em;
+  text-transform:uppercase;color:var(--acid);opacity:.8;
+}
+.now__rows dd{
+  margin:0;font-size:clamp(11px,.9vw,16.5px);line-height:1.4;
+  letter-spacing:-.008em;color:rgba(242,241,236,.86);
+}
+.now__git{
+  margin-top:auto;padding-top:clamp(28px,3vw,54px);
+  font-family:var(--mono);font-size:clamp(6.5px,.52vw,9.5px);letter-spacing:.15em;
+  text-transform:uppercase;color:rgba(242,241,236,.42);
+  transition:color .35s var(--e-out);
+}
+.now__git:hover{color:var(--acid)}
 
 /* ── the capability figure ────────────────────────────────────────────────
    A cutting pattern: soft grey body, a stitched outline, notches where a real
@@ -860,6 +1030,18 @@ ul{margin:0;padding:0;list-style:none}
   .drawer__grid{grid-template-columns:1fr;gap:34px}
   .mani__h{font-size:15vw;white-space:normal}
   .about{grid-template-columns:1fr;gap:50px}
+  /* a desktop in a phone-width column stops being legible — stack it out */
+  .mac__screen{aspect-ratio:auto}
+  .mac__desk{flex-direction:column}
+  .win__body--about,.win__body--loc{grid-template-columns:1fr;gap:26px}
+  .about__t{font-size:13vw}
+  .win .fig{width:min(100%,260px);margin-inline:auto}
+  .mac__apps{flex-direction:row}
+  .dapp{width:clamp(62px,19vw,86px)}
+  .win{min-height:300px}
+  .win + .win{position:absolute;inset:auto;left:clamp(14px,1.5vw,26px);
+    right:clamp(14px,1.5vw,26px);bottom:clamp(14px,1.5vw,26px);
+    top:calc(clamp(62px,19vw,86px) + 64px)}
   /* the pattern piece would swallow a phone at full column width */
   .fig{max-width:360px;margin-inline:auto}
   .now{width:auto}

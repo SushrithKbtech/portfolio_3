@@ -306,6 +306,12 @@ window.DATA = {
       p: 'Agentic workflow orchestration, stateful multi-step LLM pipelines and graph-based agent design. Certificate 10093427.' },
   ],
 
+  /* the Currently window */
+  now: [
+    ['currently', 'Building products, running on caffeine'],
+    ['status',    'Open to opportunities'],
+  ],
+
   /* the capability figure. [short, full, label x, label y, notch x, notch y] —
      coordinates are in the silhouette's own 460x520 viewBox. */
   caps: [

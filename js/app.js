@@ -28,6 +28,7 @@
   gsap.ticker.add(t => {
     window.CoilTick && window.CoilTick(t);
     window.ScreenTick && window.ScreenTick();
+    window.GlobeTick && window.GlobeTick(t);
   });
 
   /* ── text splitting ────────────────────────────────────────────────────── */
@@ -154,25 +155,66 @@
     fig.addEventListener('pointerleave', () => mark(-1));
   }
 
-  /* about — a clock on Bengaluru time */
-  const nowTime = $('#nowTime'), nowState = $('#nowState');
-  if (nowTime) {
+  /* ══ about — the desktop ════════════════════════════════════════════════
+     Two apps, one window at a time, a clock on Bengaluru time and a line that
+     asks GitHub when I last pushed. */
+  const mac = $('#mac');
+  if (mac) {
+    const rows = $('#nowRows');
+    if (rows && D.now) {
+      rows.innerHTML = D.now.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+    }
+
+    const wins = { about: $('#winAbout'), now: $('#winNow'), loc: $('#winLoc') };
+    const globeCv = $('#globeCv');
+    if (globeCv && window.GlobeMount) { window.GlobeMount(globeCv); window.GlobeWake(false); }
+    const show = key => {
+      $$('.dapp', mac).forEach(b => b.classList.toggle('on', b.dataset.win === key));
+      Object.entries(wins).forEach(([k, w]) => w && w.classList.toggle('on', k === key));
+      // the globe only turns while you are looking at it
+      window.GlobeWake && window.GlobeWake(key === 'loc');
+    };
+    $$('.dapp', mac).forEach(b => b.addEventListener('click', () => show(b.dataset.win)));
+    // the red light closes the window and drops the app back to idle
+    $$('.win__x', mac).forEach(x => x.addEventListener('click', e => {
+      e.stopPropagation();
+      x.closest('.win').classList.remove('on');
+      $$('.dapp', mac).forEach(b => b.classList.remove('on'));
+      window.GlobeWake && window.GlobeWake(false);
+    }));
+
+    const macClock = $('#macClock'), nowBig = $('#nowBig');
     const tick = () => {
       // IST regardless of where the page is being read
       const p = new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Asia/Kolkata', hour12: false,
-        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        timeZone: 'Asia/Kolkata', hour12: true,
+        hour: 'numeric', minute: '2-digit',   // 6:32 pm, not 06:32
       }).formatToParts(new Date()).reduce((a, x) => (a[x.type] = x.value, a), {});
-      nowTime.textContent = `${p.hour}:${p.minute}:${p.second}`;
-      const h = +p.hour;
-      if (nowState) nowState.textContent =
-        h >= 1 && h < 7  ? 'asleep — mail still lands'
-      : h >= 7 && h < 11 ? 'first coffee, then building'
-      : h >= 22          ? 'still building, still caffeinated'
-      :                    'building products, running on caffeine';
+      if (macClock) macClock.textContent = `${p.hour}:${p.minute} ${(p.dayPeriod || '').toLowerCase()}`;
+      if (nowBig) nowBig.innerHTML = `${p.hour}:${p.minute}<em>&nbsp;${(p.dayPeriod || '').toLowerCase()}</em>`;
     };
     tick();
-    setInterval(tick, 1000);
+    setInterval(tick, 20000);
+
+    /* public events, no token. It can rate-limit or fail outright, so the link is
+       already useful before the answer arrives and stays useful if it never does. */
+    const git = $('#nowGit');
+    if (git) {
+      fetch('https://api.github.com/users/SushrithKbtech/events/public?per_page=30')
+        .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+        .then(ev => {
+          const push = ev.find(e => e.type === 'PushEvent');
+          if (!push) return Promise.reject('no push');
+          const mins = (Date.now() - new Date(push.created_at)) / 60000;
+          const ago = mins < 60 ? Math.max(1, Math.round(mins)) + 'm'
+                    : mins < 1440 ? Math.round(mins / 60) + 'h'
+                    : Math.round(mins / 1440) + 'd';
+          const repo = push.repo.name.split('/')[1];
+          git.textContent = `last push to github · ${ago} ago · ${repo} ↗`;
+          git.href = 'https://github.com/' + push.repo.name;
+        })
+        .catch(() => { git.textContent = 'github.com/SushrithKbtech ↗'; });
+    }
   }
 
   /* coils */

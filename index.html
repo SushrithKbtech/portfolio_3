@@ -15,7 +15,7 @@
      end of <body> this is too late: the restore is already queued. */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 </script>
-<link rel="stylesheet" href="css/app.css?v=62">
+<link rel="stylesheet" href="css/app.css?v=70">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230B0B0C'/><text y='72' x='50' text-anchor='middle' font-family='Inter,sans-serif' font-weight='900' font-size='58' fill='%23C6F24E'>SK</text></svg>">
 </head>
 <body>
@@ -179,60 +179,137 @@
 <!-- ══ 05 · about ═══════════════════════════════════════════════════════════ -->
 <section class="about" id="about" data-sec="about">
   <div class="about__col">
-    <p class="about__lede" data-reveal-words>
-      I'm Sushrith Kandagatla — a final-year engineer with a bias for systems that
-      <em>survive contact with real users.</em>
-    </p>
-    <p class="about__body" data-reveal-words>
-      B.Tech (Hons.) in Computer Science with an AI &amp; ML specialisation at RV University,
-      Bengaluru — CGPA 8.83. I work across RAG, agentic orchestration and network security,
-      and I care about the unglamorous half: evaluation, latency, and whether the thing
-      still works on somebody else's machine.
-    </p>
-    <p class="about__body" data-reveal-words>
-      Right now I'm on a routing-protocol research track with Rochester Institute of
-      Technology, implementing EIBP on the FABRIC testbed as an OSPF replacement.
-    </p>
+    <h2 class="about__t dsp">About me</h2>
+    <!-- the About copy lives inside a desktop: two apps, one window at a time -->
+    <div class="mac" id="mac">
+      <div class="mac__lid">
+        <div class="mac__screen">
+          <div class="mac__bar">
+            <span class="mac__dots"><i></i><i></i><i></i></span>
+            <span class="mac__name">sushrith — desktop</span>
+            <span class="mac__clock" id="macClock">--:--</span>
+          </div>
+          <div class="mac__desk">
+            <div class="mac__apps">
+              <button class="dapp on" data-win="about" data-cursor="open">
+                <span class="dapp__i">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8.4" r="3.9"/>
+                    <path d="M4.4 20.4c.8-4 3.9-6.1 7.6-6.1s6.8 2.1 7.6 6.1"/>
+                  </svg>
+                </span>
+                <span class="dapp__n">About me</span>
+              </button>
+              <button class="dapp" data-win="now" data-cursor="open">
+                <span class="dapp__i">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="8.4"/>
+                    <path d="M12 7.2V12l3.3 2"/>
+                  </svg>
+                </span>
+                <span class="dapp__n">Currently</span>
+              </button>
+              <button class="dapp" data-win="loc" data-cursor="open">
+                <span class="dapp__i">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 21.2s6.6-6 6.6-10.6a6.6 6.6 0 1 0-13.2 0C5.4 15.2 12 21.2 12 21.2Z"/>
+                    <circle cx="12" cy="10.4" r="2.5"/>
+                  </svg>
+                </span>
+                <span class="dapp__n">Location</span>
+              </button>
+            </div>
 
-    <!-- the clock takes the row the stats used to hold -->
-    <div class="nowrow">
-      <div class="now">
-        <span class="now__dot"></span>
-        <b class="now__time" id="nowTime">--:--:--</b>
-        <span class="now__where">Bengaluru · IST</span>
-        <span class="now__sep"></span>
-        <span class="now__state" id="nowState">building products, running on caffeine</span>
+            <article class="win on" id="winAbout">
+              <div class="win__bar"><span class="win__x" data-cursor="close"></span>About me</div>
+              <div class="win__body win__body--about">
+                <div class="win__col">
+                <p class="win__lede">
+                  I'm Sushrith Kandagatla — a final-year engineer with a bias for systems that
+                  <em>survive contact with real users.</em>
+                </p>
+                <p class="win__p">
+                  B.Tech (Hons.) in Computer Science with an AI &amp; ML specialisation at RV
+                  University, Bengaluru. I work across RAG, agentic orchestration and network
+                  security, and I care about the unglamorous half: evaluation, latency, and
+                  whether the thing still works on somebody else's machine.
+                </p>
+                <p class="win__p">
+                  I like the part of the job where a demo has to survive a real network, a real
+                  deadline and somebody else's laptop. Most of what is on this page got there
+                  that way.
+                </p>
+                </div>
+                <div class="win__col win__col--fig">
+                  <p class="win__k">Capabilities</p>
+        <!-- a pattern piece. The outline is stitched and notched like a cutting guide, and
+             what I can actually do is laid out inside the head rather than beside it. -->
+        <figure class="fig" id="capFig">
+          <svg class="fig__svg" viewBox="0 0 460 520" role="img"
+               aria-label="Capabilities, set inside a head-and-shoulders silhouette">
+            <defs>
+              <linearGradient id="figG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#0B0B0C" stop-opacity=".15"/>
+                <stop offset=".55" stop-color="#0B0B0C" stop-opacity=".08"/>
+                <stop offset="1" stop-color="#0B0B0C" stop-opacity=".03"/>
+              </linearGradient>
+              <linearGradient id="figGD" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#F2F1EC" stop-opacity=".17"/>
+                <stop offset=".55" stop-color="#F2F1EC" stop-opacity=".09"/>
+                <stop offset="1" stop-color="#F2F1EC" stop-opacity=".03"/>
+              </linearGradient>
+            </defs>
+            <path class="fig__fill" d="M230 24C296 24 338 76 338 150C338 196 332 234 316 262C306 280 292 292 276 296L276 336C276 356 300 368 340 380C392 394 430 404 446 418L446 520L14 520L14 418C30 404 68 394 120 380C160 368 184 356 184 336L184 296C168 292 154 280 144 262C128 234 122 196 122 150C122 76 164 24 230 24Z"/>
+            <path class="fig__stitch" d="M230 24C296 24 338 76 338 150C338 196 332 234 316 262C306 280 292 292 276 296L276 336C276 356 300 368 340 380C392 394 430 404 446 418L446 520L14 520L14 418C30 404 68 394 120 380C160 368 184 356 184 336L184 296C168 292 154 280 144 262C128 234 122 196 122 150C122 76 164 24 230 24Z"/>
+            <g class="fig__marks"></g>
+            <g class="fig__labels"></g>
+          </svg>
+          <figcaption class="fig__cap" id="capCap">Seven pieces. Run over one.</figcaption>
+        </figure>
+                </div>
+              </div>
+            </article>
+
+            <article class="win" id="winNow">
+              <div class="win__bar"><span class="win__x" data-cursor="close"></span>Currently</div>
+              <div class="win__body win__body--now">
+                <p class="now__k">Now</p>
+                <p class="now__big" id="nowBig">--:--<em>&nbsp;</em></p>
+                <p class="now__where">IST</p>
+                <dl class="now__rows" id="nowRows"></dl>
+                <a class="now__git" id="nowGit" href="https://github.com/SushrithKbtech"
+                   target="_blank" rel="noopener" data-cursor="github">reading github…</a>
+              </div>
+            </article>
+
+            <article class="win" id="winLoc">
+              <div class="win__bar"><span class="win__x" data-cursor="close"></span>Location</div>
+              <div class="win__body win__body--loc">
+                <div class="win__col win__col--globe">
+                  <canvas class="globe" id="globeCv" aria-label="Bengaluru, on a globe"></canvas>
+                  <p class="globe__co">12.97&deg;N &nbsp;·&nbsp; 77.59&deg;E</p>
+                </div>
+                <div class="win__col">
+                  <p class="win__k">Where</p>
+                  <ul class="wheres">
+                    <li><span>Bengaluru, IN</span><i></i></li>
+                    <li><span>RV University</span><i></i></li>
+                    <li><span>RIT · remote</span><i></i></li>
+                    <li><span>Open to relocate</span><i></i></li>
+                  </ul>
+                  <p class="globe__note">
+                    Bengaluru is <em>UTC+5:30</em> — roughly half a working day ahead of New York
+                    and half a day behind Sydney. Remote has never been the hard part.
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
       </div>
+      <div class="mac__hinge"></div>
+      <div class="mac__base"><span></span></div>
     </div>
-  </div>
-  <div class="about__side">
-    <p class="about__k">Capabilities</p>
-    <!-- a pattern piece. The outline is stitched and notched like a cutting guide, and
-         what I can actually do is laid out inside the head rather than beside it. -->
-    <figure class="fig" id="capFig">
-      <svg class="fig__svg" viewBox="0 0 460 520" role="img"
-           aria-label="Capabilities, set inside a head-and-shoulders silhouette">
-        <defs>
-          <linearGradient id="figG" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#0B0B0C" stop-opacity=".15"/>
-            <stop offset=".55" stop-color="#0B0B0C" stop-opacity=".08"/>
-            <stop offset="1" stop-color="#0B0B0C" stop-opacity=".03"/>
-          </linearGradient>
-        </defs>
-        <path class="fig__fill" d="M230 24C296 24 338 76 338 150C338 196 332 234 316 262C306 280 292 292 276 296L276 336C276 356 300 368 340 380C392 394 430 404 446 418L446 520L14 520L14 418C30 404 68 394 120 380C160 368 184 356 184 336L184 296C168 292 154 280 144 262C128 234 122 196 122 150C122 76 164 24 230 24Z"/>
-        <path class="fig__stitch" d="M230 24C296 24 338 76 338 150C338 196 332 234 316 262C306 280 292 292 276 296L276 336C276 356 300 368 340 380C392 394 430 404 446 418L446 520L14 520L14 418C30 404 68 394 120 380C160 368 184 356 184 336L184 296C168 292 154 280 144 262C128 234 122 196 122 150C122 76 164 24 230 24Z"/>
-        <g class="fig__marks"></g>
-        <g class="fig__labels"></g>
-      </svg>
-      <figcaption class="fig__cap" id="capCap">Seven pieces. Run over one.</figcaption>
-    </figure>
-    <p class="about__k about__k--2">Where</p>
-    <ul class="wheres">
-      <li><span>Bengaluru, IN</span><i></i></li>
-      <li><span>RV University</span><i></i></li>
-      <li><span>RIT · remote</span><i></i></li>
-      <li><span>Open to relocate</span><i></i></li>
-    </ul>
   </div>
 </section>
 
@@ -346,11 +423,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/data.js?v=62"></script>
-<script src="js/coil.js?v=62"></script>
-<script src="js/screen.js?v=62"></script>
-<script src="js/cursor.js?v=62"></script>
-<script src="js/game.js?v=62"></script>
-<script src="js/app.js?v=62"></script>
+<script src="js/data.js?v=70"></script>
+<script src="js/coil.js?v=71"></script>
+<script src="js/screen.js?v=71"></script>
+<script src="js/world.js?v=71"></script>
+<script src="js/globe.js?v=71"></script>
+<script src="js/cursor.js?v=71"></script>
+<script src="js/game.js?v=71"></script>
+<script src="js/app.js?v=71"></script>
 </body>
 </html>
