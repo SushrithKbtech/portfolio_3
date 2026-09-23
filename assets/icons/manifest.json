@@ -1,0 +1,162 @@
+[
+ {
+  "slug": "python",
+  "label": "Python",
+  "hex": "3776AB"
+ },
+ {
+  "slug": "pytorch",
+  "label": "PyTorch",
+  "hex": "EE4C2C"
+ },
+ {
+  "slug": "openai",
+  "label": "OpenAI",
+  "hex": "FFFFFF"
+ },
+ {
+  "slug": "huggingface",
+  "label": "Hugging Face",
+  "hex": "FFD21E"
+ },
+ {
+  "slug": "langchain",
+  "label": "LangGraph",
+  "hex": "5FD0A0"
+ },
+ {
+  "slug": "scikitlearn",
+  "label": "scikit-learn",
+  "hex": "F7931E"
+ },
+ {
+  "slug": "numpy",
+  "label": "NumPy",
+  "hex": "013243"
+ },
+ {
+  "slug": "pandas",
+  "label": "pandas",
+  "hex": "150458"
+ },
+ {
+  "slug": "jupyter",
+  "label": "Jupyter",
+  "hex": "F37626"
+ },
+ {
+  "slug": "streamlit",
+  "label": "Streamlit",
+  "hex": "FF4B4B"
+ },
+ {
+  "slug": "react",
+  "label": "React",
+  "hex": "61DAFB"
+ },
+ {
+  "slug": "nextdotjs",
+  "label": "Next.js",
+  "hex": "FFFFFF"
+ },
+ {
+  "slug": "typescript",
+  "label": "TypeScript",
+  "hex": "3178C6"
+ },
+ {
+  "slug": "javascript",
+  "label": "JavaScript",
+  "hex": "F7DF1E"
+ },
+ {
+  "slug": "threedotjs",
+  "label": "Three.js",
+  "hex": "FFFFFF"
+ },
+ {
+  "slug": "tailwindcss",
+  "label": "Tailwind",
+  "hex": "06B6D4"
+ },
+ {
+  "slug": "vite",
+  "label": "Vite",
+  "hex": "646CFF"
+ },
+ {
+  "slug": "greensock",
+  "label": "GSAP",
+  "hex": "88CE02"
+ },
+ {
+  "slug": "nodedotjs",
+  "label": "Node.js",
+  "hex": "999999"
+ },
+ {
+  "slug": "express",
+  "label": "Express",
+  "hex": "FFFFFF"
+ },
+ {
+  "slug": "supabase",
+  "label": "Supabase",
+  "hex": "3FCF8E"
+ },
+ {
+  "slug": "postgresql",
+  "label": "PostgreSQL",
+  "hex": "4169E1"
+ },
+ {
+  "slug": "mongodb",
+  "label": "MongoDB",
+  "hex": "47A248"
+ },
+ {
+  "slug": "fastapi",
+  "label": "FastAPI",
+  "hex": "0FC9A0"
+ },
+ {
+  "slug": "docker",
+  "label": "Docker",
+  "hex": "2496ED"
+ },
+ {
+  "slug": "git",
+  "label": "Git",
+  "hex": "F05032"
+ },
+ {
+  "slug": "github",
+  "label": "GitHub",
+  "hex": "FFFFFF"
+ },
+ {
+  "slug": "vercel",
+  "label": "Vercel",
+  "hex": "FFFFFF"
+ },
+ {
+  "slug": "linux",
+  "label": "Linux",
+  "hex": "FFFFFF"
+ },
+ {
+  "slug": "c",
+  "label": "C",
+  "hex": "A8B9CC"
+ },
+ {
+  "slug": "raspberrypi",
+  "label": "Raspberry Pi",
+  "hex": "A22846"
+ },
+ {
+  "slug": "googlecloud",
+  "label": "Google Cloud",
+  "hex": "4285F4"
+ }
+]

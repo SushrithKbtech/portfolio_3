@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sushrith Kandagatla — AI/ML Engineer</title>
+<meta name="description" content="Final-year CSE (AI &amp; ML) engineer building agentic systems, RAG pipelines and network-security research out of Bengaluru.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Yellowtail&display=swap" rel="stylesheet">
+<script>
+  /* Before anything else parses. A page with a preloader has to start at the top, and
+     the browser restores the previous scroll position on reload — which left the boot
+     screen playing over a page already scrolled half way down. Set from app.js at the
+     end of <body> this is too late: the restore is already queued. */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+</script>
+<link rel="stylesheet" href="css/app.css?v=62">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230B0B0C'/><text y='72' x='50' text-anchor='middle' font-family='Inter,sans-serif' font-weight='900' font-size='58' fill='%23C6F24E'>SK</text></svg>">
+</head>
+<body>
+
+<!-- ══ the water cursor ═════════════════════════════════════════════════════ -->
+<svg class="cursor" aria-hidden="true"><path class="cursor__path"/></svg>
+<div class="cursor-label" aria-hidden="true"><span></span></div>
+
+<!-- ══ boot — the mark draws itself in over a technical readout ═══════════ -->
+<div class="boot" id="boot">
+  <p class="boot__hello" id="bootHello">Hello</p>
+  <div class="boot__inner">
+    <!-- the S is a signature in one continuous stroke; the K is the straight
+         monoline form. Drawn in that order — S first, then the K in three strokes. -->
+    <svg class="boot__mark" id="bootMark" viewBox="0 0 280 160" aria-label="SK">
+      <path d="M124 42C124 25 105 16 82 18C60 20 44 33 46 50C48 67 67 75 87 82C108 89 126 99 124 118C122 137 99 147 76 145C56 143 40 133 38 118C37 110 40 104 45 100"/>
+      <path d="M170 22L170 142"/>
+      <path d="M246 24L182 83"/>
+      <path d="M198 73L250 142"/>
+    </svg>
+    <div class="boot__meter">
+      <div class="boot__ticks"></div>
+      <div class="boot__track"><i id="bootFill"></i></div>
+    </div>
+    <p class="boot__read">
+      <span id="bootTask">INIT</span>
+      <span class="boot__pct"><b id="bootPct">000</b>%</span>
+    </p>
+  </div>
+</div>
+
+<!-- ══ nav — tracks the section you're in ═══════════════════════════════════ -->
+<header class="nav" id="nav">
+  <a class="nav__mark" href="#top" data-cursor="top">SK.PORTFOLIO</a>
+  <nav class="nav__set" id="navSet">
+    <a class="nav__i" href="#work"    data-sec="work"><i></i><span>WORK</span></a>
+    <a class="nav__i" href="#about"   data-sec="about"><i></i><span>ABOUT</span></a>
+    <a class="nav__i" href="#proof"   data-sec="proof"><i></i><span>PROOF</span></a>
+    <a class="nav__i" href="#contact" data-sec="contact"><i></i><span>GET IN TOUCH</span></a>
+  </nav>
+  <span class="nav__rail" id="navRail"></span>
+</header>
+
+<!-- pops three times on load so it is the first thing you notice -->
+<a class="cv" id="cvBtn" href="assets/Sushrith-Kandagatla-Resume.pdf"
+   download="Sushrith-Kandagatla-Resume.pdf" data-cursor="download">
+  <span class="cv__b">Download résumé</span>
+  <span class="cv__note" id="cvNote">Click to download my résumé</span>
+</a>
+
+<main id="top">
+
+<!-- ══ 01 · hero ════════════════════════════════════════════════════════════ -->
+<section class="hero" id="hero" data-sec="hero">
+  <h1 class="hero__h">
+    <span class="ln"><span class="warp" data-warp>BUILDING</span></span>
+    <span class="ln"><span class="warp" data-warp>INTELLIGENCE</span></span>
+    <span class="ln"><span class="warp" data-warp>THAT SHIPS</span></span>
+  </h1>
+  <p class="hero__lede">
+    A final-year CSE (AI &amp; ML) engineer building agentic systems, RAG pipelines
+    and network-security research out of Bengaluru since 2023.
+  </p>
+
+  <!-- the machine the rest of the page was built on, running the work itself -->
+  <div class="rig" aria-hidden="true">
+    <div class="rig__lid">
+      <div class="rig__screen"><canvas id="heroScreen"></canvas></div>
+    </div>
+    <div class="rig__hinge"></div>
+    <div class="rig__deck"><span></span></div>
+  </div>
+
+  <div class="hero__meta">
+    <span>BENGALURU, IN</span><span>B.TECH (HONS.) · CGPA 8.83</span><span>GRADUATING 2027</span>
+  </div>
+  <div class="hero__cue"><i></i><span>SCROLL</span></div>
+</section>
+
+<!-- ══ 02 · statement ═══════════════════════════════════════════════════════ -->
+<section class="stmt" id="stmt" data-sec="stmt">
+  <div class="stmt__hold">
+    <p class="stmt__h" data-reveal-words>
+      I build <em>agentic systems, retrieval pipelines, and interfaces</em>
+      that actually leave the laptop.
+    </p>
+    <div class="stmt__obj"><canvas data-coil="stmt"></canvas></div>
+  </div>
+</section>
+
+<!-- ══ 02b · the toolbox ════════════════════════════════════════════════════ -->
+<section class="tools" id="tools">
+  <div class="tools__head">
+    <h2 class="tools__t">THE TOOLBOX</h2>
+    <p class="tools__p">Everything I reach for,<br>and actually know.</p>
+  </div>
+  <div class="rail"><div class="rail__track" id="railA"></div></div>
+  <div class="rail"><div class="rail__track" id="railB"></div></div>
+</section>
+
+<!-- ══ 03 · work — the ring ═════════════════════════════════════════════════ -->
+<section class="work" id="work" data-sec="work">
+  <div class="work__head">
+    <div class="worksmq"><div class="worksmq__t" id="worksTrack"></div></div>
+    <p class="work__lead">Eight systems built for real users,<br>real constraints, real deadlines.</p>
+  </div>
+
+  <div class="ring" id="ring">
+    <div class="ring__stage" id="ringStage">
+      <!-- the coil sits at the centre of the stage and the panels orbit in front of it,
+           so it stays visible in the gaps either side of whichever project is facing you -->
+      <div class="ring__core"><canvas data-coil="ring"></canvas></div>
+      <div class="ring__orbit" id="ringOrbit"></div>
+    </div>
+
+    <div class="ring__read" id="ringRead">
+      <p class="ring__k"><span id="rNum">01</span> / <em id="rTot">08</em><b id="rKind"></b></p>
+      <h3 class="ring__n" id="rName"></h3>
+      <p class="ring__t" id="rTag"></p>
+      <button class="ring__more" id="rMore" data-cursor="open">
+        <span>Read the detail</span><i></i>
+      </button>
+    </div>
+
+    <div class="ring__nav">
+      <button id="rPrev" data-cursor="prev" aria-label="Previous project">←</button>
+      <button id="rNext" data-cursor="next" aria-label="Next project">→</button>
+    </div>
+
+    <!-- detail: slides down over the ring, so it reads as coming out of the panel -->
+  <div class="drawer" id="drawer" hidden>
+    <div class="drawer__in">
+      <button class="drawer__x" id="drawerX" data-cursor="close">CLOSE ✕</button>
+      <div class="drawer__grid">
+        <div>
+          <h4 id="dName"></h4>
+          <p class="drawer__d" id="dDesc"></p>
+          <div class="drawer__links" id="dLinks"></div>
+        </div>
+        <div>
+          <p class="drawer__k">Tech stack</p>
+          <ul class="drawer__stack" id="dStack"></ul>
+          <p class="drawer__k drawer__k--2">By the numbers</p>
+          <div class="drawer__m" id="dMetrics"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+</section>
+
+<!-- ══ 04 · manifesto ═══════════════════════════════════════════════════════ -->
+<section class="mani" id="mani" data-sec="mani">
+  <h2 class="mani__h">
+    <span class="ln">(HUMAN) CURIOSITY</span>
+    <span class="ln">MACHINE SPEED</span>
+  </h2>
+</section>
+
+<!-- ══ 05 · about ═══════════════════════════════════════════════════════════ -->
+<section class="about" id="about" data-sec="about">
+  <div class="about__col">
+    <p class="about__lede" data-reveal-words>
+      I'm Sushrith Kandagatla — a final-year engineer with a bias for systems that
+      <em>survive contact with real users.</em>
+    </p>
+    <p class="about__body" data-reveal-words>
+      B.Tech (Hons.) in Computer Science with an AI &amp; ML specialisation at RV University,
+      Bengaluru — CGPA 8.83. I work across RAG, agentic orchestration and network security,
+      and I care about the unglamorous half: evaluation, latency, and whether the thing
+      still works on somebody else's machine.
+    </p>
+    <p class="about__body" data-reveal-words>
+      Right now I'm on a routing-protocol research track with Rochester Institute of
+      Technology, implementing EIBP on the FABRIC testbed as an OSPF replacement.
+    </p>
+
+    <!-- the clock takes the row the stats used to hold -->
+    <div class="nowrow">
+      <div class="now">
+        <span class="now__dot"></span>
+        <b class="now__time" id="nowTime">--:--:--</b>
+        <span class="now__where">Bengaluru · IST</span>
+        <span class="now__sep"></span>
+        <span class="now__state" id="nowState">building products, running on caffeine</span>
+      </div>
+    </div>
+  </div>
+  <div class="about__side">
+    <p class="about__k">Capabilities</p>
+    <!-- a pattern piece. The outline is stitched and notched like a cutting guide, and
+         what I can actually do is laid out inside the head rather than beside it. -->
+    <figure class="fig" id="capFig">
+      <svg class="fig__svg" viewBox="0 0 460 520" role="img"
+           aria-label="Capabilities, set inside a head-and-shoulders silhouette">
+        <defs>
+          <linearGradient id="figG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#0B0B0C" stop-opacity=".15"/>
+            <stop offset=".55" stop-color="#0B0B0C" stop-opacity=".08"/>
+            <stop offset="1" stop-color="#0B0B0C" stop-opacity=".03"/>
+          </linearGradient>
+        </defs>
+        <path class="fig__fill" d="M230 24C296 24 338 76 338 150C338 196 332 234 316 262C306 280 292 292 276 296L276 336C276 356 300 368 340 380C392 394 430 404 446 418L446 520L14 520L14 418C30 404 68 394 120 380C160 368 184 356 184 336L184 296C168 292 154 280 144 262C128 234 122 196 122 150C122 76 164 24 230 24Z"/>
+        <path class="fig__stitch" d="M230 24C296 24 338 76 338 150C338 196 332 234 316 262C306 280 292 292 276 296L276 336C276 356 300 368 340 380C392 394 430 404 446 418L446 520L14 520L14 418C30 404 68 394 120 380C160 368 184 356 184 336L184 296C168 292 154 280 144 262C128 234 122 196 122 150C122 76 164 24 230 24Z"/>
+        <g class="fig__marks"></g>
+        <g class="fig__labels"></g>
+      </svg>
+      <figcaption class="fig__cap" id="capCap">Seven pieces. Run over one.</figcaption>
+    </figure>
+    <p class="about__k about__k--2">Where</p>
+    <ul class="wheres">
+      <li><span>Bengaluru, IN</span><i></i></li>
+      <li><span>RV University</span><i></i></li>
+      <li><span>RIT · remote</span><i></i></li>
+      <li><span>Open to relocate</span><i></i></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ══ 06 · proof — achievements + certifications ═══════════════════════════ -->
+<section class="proof" id="proof" data-sec="proof">
+  <div class="proof__head">
+    <span class="pill">Recognition</span>
+    <h2 class="proof__t">Proof the work<br>left the laptop.</h2>
+  </div>
+  <div class="achs" id="achs"></div>
+
+  <!-- one stage, two states: the certificates disperse out of it while the skill tree
+       fades in behind them, so it reads as one shot rather than two sections -->
+  <div class="field__hold" id="fieldHold">
+    <div class="proof__head proof__head--2" id="credHead">
+      <span class="pill">Credentials</span>
+      <h2 class="proof__t">Certified, scored,<br>and on the record.</h2>
+    </div>
+    <div class="field" id="certs"></div>
+    <div class="abil" id="abil">
+  <div class="abil__head">
+    <span class="pill pill--dark">02 / Skill tree</span>
+    <h2 class="abil__t">Abilities</h2>
+  </div>
+  <div class="abil__grid" id="abilGrid"></div>
+  <div class="abil__chips" id="abilChips"></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 07 · CTA ═════════════════════════════════════════════════════════════ -->
+<section class="cta" id="cta">
+  <div class="cta__obj"><canvas data-coil="cta"></canvas></div>
+  <div class="cta__track" id="ctaTrack">
+    <span>LET'S BUILD SOMETHING</span><span>LET'S BUILD SOMETHING</span><span>LET'S BUILD SOMETHING</span>
+  </div>
+</section>
+
+<!-- ══ 08 · contact ═════════════════════════════════════════════════════════ -->
+<section class="contact" id="contact" data-sec="contact">
+  <!-- the box here used to type a paragraph at you and then sit there. Same frame,
+       something to do in it. -->
+  <div class="gm">
+    <div class="gm__bar">
+      <span>SNAKE.EXE</span>
+      <span class="gm__hud">SCORE <b id="gmScore">00</b> · BEST <b id="gmBest">00</b></span>
+    </div>
+    <canvas class="gm__c" id="gmCanvas" aria-label="Snake — arrows or WASD to play"></canvas>
+    <div class="gm__foot">
+      <span class="gm__hint" id="gmHint">enter to start</span>
+    </div>
+  </div>
+
+  <!-- not a second list of links — the phone in the footer already does that.
+       This says what a message should be about, and writes the first line for you. -->
+  <aside class="brief">
+    <!-- stuck to the page the way you would stick one to a monitor -->
+    <figure class="note">
+      <span class="note__tape"></span>
+      <p class="note__h">notes to self</p>
+      <ul class="note__list">
+        <li>ship it, <b>then</b> measure it</li>
+        <li>the eval set <b>is</b> the product</li>
+        <li>&ldquo;works on my machine&rdquo; isn&rsquo;t done</li>
+        <li><b>latency</b> is a feature</li>
+        <li>read the error. <b>all</b> of it</li>
+      </ul>
+      <p class="note__m">stuck to my monitor since 2023</p>
+    </figure>
+  </aside>
+</section>
+
+<!-- ══ 09 · footer ══════════════════════════════════════════════════════════ -->
+<footer class="foot" id="foot">
+  <h2 class="foot__h">
+    <span class="ln"><span class="warp" data-warp>SHIPPING &amp;</span></span>
+    <span class="ln"><span class="warp" data-warp>LEARNING SINCE</span></span>
+    <span class="ln"><span class="warp" data-warp>'2023</span></span>
+  </h2>
+  <!-- the ways to reach me, as things you can actually tap -->
+  <div class="phone">
+    <div class="phone__lid">
+      <div class="phone__screen">
+        <div class="phone__bar"><i></i><span>SK</span></div>
+        <p class="phone__k">Reach me</p>
+        <div class="phone__apps">
+          <a class="app" href="https://github.com/SushrithKbtech" target="_blank" rel="noopener" data-cursor="github">
+            <i><img src="assets/icons/github.svg" alt=""></i><span>GitHub</span></a>
+          <a class="app" href="https://www.linkedin.com/in/sushrith-kandagatla-9751572a6/" target="_blank" rel="noopener" data-cursor="linkedin">
+            <i><img src="assets/icons/linkedin.svg" alt=""></i><span>LinkedIn</span></a>
+          <a class="app" href="mailto:sushrithkandagatla@gmail.com" data-cursor="email">
+            <i><img src="assets/icons/gmail.svg" alt=""></i><span>Email</span></a>
+          <a class="app" href="assets/Sushrith-Kandagatla-Resume.pdf" download data-cursor="download">
+            <i class="app__cv">CV</i><span>Résumé</span></a>
+        </div>
+        <p class="phone__foot">+91 78927 86525</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot__bar">
+    <span>©2026 SUSHRITH KANDAGATLA. ALL RIGHTS RESERVED</span>
+    <span class="foot__mid">BENGALURU, IN</span>
+    <a href="mailto:sushrithkandagatla@gmail.com">SUSHRITHKANDAGATLA@GMAIL.COM</a>
+  </div>
+</footer>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script src="js/data.js?v=62"></script>
+<script src="js/coil.js?v=62"></script>
+<script src="js/screen.js?v=62"></script>
+<script src="js/cursor.js?v=62"></script>
+<script src="js/game.js?v=62"></script>
+<script src="js/app.js?v=62"></script>
+</body>
+</html>

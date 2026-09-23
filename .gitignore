@@ -1,0 +1,5 @@
+# nothing here is built — no node_modules, no dist
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
