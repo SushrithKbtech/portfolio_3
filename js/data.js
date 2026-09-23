@@ -290,7 +290,7 @@ window.DATA = {
       m: '01' },
     { h: '1st Prize — Avishkar', w: 'Vemana Institute of Technology · ISTE & IEEE',
       p: 'First prize for a Traffic Management System at the inter-college project exhibition.',
-      m: '₹3,000' },
+      m: '1st' },
   ],
 
   certs: [
