@@ -185,6 +185,7 @@ ul{margin:0;padding:0;list-style:none}
 .hero__h .ln{display:block;white-space:nowrap}
 .hero__lede{
   margin:clamp(10px,1.2vw,24px) 0 0;max-width:min(52ch,46vw);
+  font-family:var(--serif);font-style:italic;font-weight:400;
   font-size:clamp(13px,1.08vw,21px);line-height:1.5;letter-spacing:-.012em;opacity:0;
 }
 
