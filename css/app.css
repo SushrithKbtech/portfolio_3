@@ -277,6 +277,7 @@ ul{margin:0;padding:0;list-style:none}
 }
 .tools__p{
   margin:clamp(18px,2vw,34px) 0 0;color:var(--paper);max-width:min(46ch,44vw);
+  font-family:var(--serif);font-style:italic;font-weight:400;
   font-size:clamp(13px,1.08vw,21px);line-height:1.5;letter-spacing:-.012em;
 }
 .tile{
