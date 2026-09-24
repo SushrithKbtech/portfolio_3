@@ -74,12 +74,9 @@ ul{margin:0;padding:0;list-style:none}
    exactly the same spot — one leaves, the other arrives */
 .boot__hello,.boot__inner{grid-area:1/1}
 .boot__hello{
-  width:min(74vw,560px);height:auto;overflow:visible;display:block;
-}
-/* invisible until the clip rect opens — no separate fade needed, the reveal IS the entrance */
-#helloText{
-  font-family:var(--script);font-weight:400;font-size:120px;
-  fill:var(--paper);letter-spacing:.01em;
+  margin:0;font-family:var(--script);font-weight:400;
+  font-size:clamp(62px,9.2vw,168px);line-height:1;color:var(--paper);
+  letter-spacing:.01em;opacity:0;
 }
 .boot__inner{
   width:min(360px,74vw);display:flex;flex-direction:column;align-items:center;opacity:0;
