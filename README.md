@@ -107,7 +107,15 @@ meridians and parallels with the far hemisphere simply not drawn, Bengaluru mark
 coordinates, plus real coastlines from Natural Earth's 110m land dataset. Those are decoded
 from TopoJSON and simplified once, offline (`3394` points, `js/world.js`), not fetched or
 decoded in the browser — the globe works with no network call. Only ticks while its window is
-open; the rest of the time it costs nothing. Five poster cards on cream mats. Odd ones enter from above, even
+open; the rest of the time it costs nothing.
+
+It also takes a drag. Auto-spin is always exactly `time * SPIN`, never paused and never
+rewritten — a drag only ever adds a temporary offset on top of it, tracked with a pointer
+capture so the motion keeps up even off the canvas. Letting go doesn't leave it wherever you
+stopped: the offset decays back to zero (`offset *= 0.9` a frame) rather than the spin being
+re-based on the release point, so the globe eases back onto the exact trajectory it would have
+been on had you never touched it and carries on turning from there. The render loop bypasses
+its own ~20fps cap while dragging or still easing back, so the motion doesn't step. Five poster cards on cream mats. Odd ones enter from above, even
 ones from below, then keep drifting past each other on scroll — the effect the reference
 gets from its award wall.
 
@@ -133,9 +141,17 @@ from the eye. The contrast is the point — a diffuse mid-grey ramp reads as rub
 good the geometry is, and depth is allowed to darken only the bottom of the ramp so the near
 wires still reach white. It also needs *short* segments: shading is averaged per stroked
 segment, and at 7 segments a strand each one spanned 51° of the ring, which washed the specular
-out completely. 18 resolves it. The backing store is capped at 1.75x device pixels rather than
-the display's true DPR — on a 2x+ Windows scale that is a real saving for a difference you
-cannot see on a soft-edged strand.
+out completely. 16 segments (22.5° each) still resolves it. The backing store is capped at
+1.75x device pixels rather than the display's true DPR — on a 2x+ Windows scale that is a real
+saving for a difference you cannot see on a soft-edged strand.
+
+Isolating `context.stroke()` from the rest of a frame (swap it for a no-op, time the frame,
+put it back) showed it accounting for roughly 93% of the cost — the trig building the geometry
+is cheap by comparison. That makes lane count, not strand count, the lever that actually
+matters: each non-empty lane costs two `stroke()` calls, so 12x8 = 96 lanes meant up to ~192
+canvas calls a frame. It is 9x6 = 54 now, a 44% cut, with strands trimmed 38→32 and segments
+18→16 on top (still comfortably under the 22.5° ceiling above) for a further ~25% fewer points
+built per frame. The depth banding is still smooth enough to read as one continuous surface.
 
 Every lane's colour and line width used to be rebuilt every frame — a divide, a `Math.round`,
 a `toFixed`, an `rgb()` string, up to 96 lanes, twice each (outline then fill), at 20fps. None
@@ -144,14 +160,19 @@ resize into lookup tables (`precompute()` in `js/coil.js`) and the draw loop jus
 The geometry itself can't be cached the same way — the object is continuously turning and
 rippling — so that part of the cost stays; this removes the part that was pure waste.
 
-Segment count is the thing to watch, and it is not linear. 38 strands × 18 segments costs
-**~2ms a draw** at a large (~860×960) backing size; 44 × 22 — only 2.3× the segments — costs
-**58ms**, which is a stall you can feel. Stroked segments carry round caps at both ends, and
-past a few hundred subpaths per frame the rasteriser falls off a cliff. `window.CoilInstances`
+Segment and lane count are the things to watch, and neither is linear. Going the other way —
+44 strands × 22 segments, only 2.3× the segments of the current setting — measured in the tens
+of milliseconds a draw, a stall you can feel; stroked segments carry round caps at both ends,
+and past a few hundred subpaths a frame the rasteriser falls off a cliff. `window.CoilInstances`
 exposes the live instances for exactly this: `CoilInstances.find(c => c.wave).draw(t)` in a
 timed loop measures one instance directly, without needing Lenis and ScrollTrigger to agree on
-a scroll position first. Re-measure after any change, and treat a sudden jump as a regression.
-Idles at 0 when off-screen.
+a scroll position first — though absolute millisecond figures from this pane's own automation
+harness have proven unreliable run to run (the same instance measured 15x apart seconds apart
+with nothing else changed), so trust *relative* comparisons (stroke-off vs stroke-on, before vs
+after a change) over a single absolute number, and confirm a visual change actually landed by
+sampling the canvas's own pixels (`getImageData`) rather than trusting a screenshot from a pane
+that has, more than once in this project's history, rendered a stale frame. Idles at 0 when
+off-screen.
 
 The hero → dark cross-fade ScrollTrigger used to call `gsap.set(selectorString, …)` on every
 scrub tick while scrolling through the hero and into this section — which re-runs

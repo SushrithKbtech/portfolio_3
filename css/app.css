@@ -611,7 +611,8 @@ ul{margin:0;padding:0;list-style:none}
 .win__col{min-width:0;display:flex;flex-direction:column}
 .win__col--fig{align-items:center}
 .win__col--globe{align-items:center;justify-content:center}
-.globe{display:block;width:min(100%,340px);aspect-ratio:1}
+.globe{display:block;width:min(100%,340px);aspect-ratio:1;touch-action:none}
+.globe.grabbing{cursor:grabbing}   /* only shows when the custom cursor is off (reduced motion, touch) */
 .globe__co{
   margin:clamp(8px,.9vw,16px) 0 0;font-family:var(--mono);
   font-size:clamp(8px,.62vw,11.5px);letter-spacing:.2em;color:var(--acid);opacity:.85;

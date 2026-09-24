@@ -35,9 +35,9 @@
 (function () {
   const TAU = Math.PI * 2;
   const BUCKETS = 10;          // brightness lanes, plain renderer
-  const DEPTHS = 12;           // depth lanes, hero renderer — these give the occlusion
-  const LUMS = 8;              // brightness lanes within a depth lane
-  const FRAME_MS = 50;
+  const DEPTHS = 9;            // depth lanes, hero renderer — these give the occlusion
+  const LUMS = 6;              // brightness lanes within a depth lane
+  const FRAME_MS = 55;
 
   /* the wave. K crests around the ring, travelling at WAVE_S rad/s. */
   const WAVE_K = 3;
@@ -258,7 +258,7 @@
   }
 
   const coils = [];
-  window.COIL_BUILD = 34;
+  window.COIL_BUILD = 35;
   window.CoilMount = function (canvas, opts) { const c = new Coil(canvas, opts); coils.push(c); return c; };
   window.CoilTick = function (t) { for (let i = 0; i < coils.length; i++) coils[i].draw(t); };
   // exposed so a draw can be timed directly (c.draw(t) in a loop) without fighting

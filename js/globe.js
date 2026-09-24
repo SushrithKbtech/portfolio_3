@@ -6,13 +6,22 @@
 
    Coastlines come from js/world.js — Natural Earth 110m land, decoded from TopoJSON at
    build time and baked in, so there is no fetch and no decoder at runtime. Capped near
-   20fps and idle when the window it lives in is closed or off screen. */
+   20fps and idle when the window it lives in is closed or off screen.
+
+   You can grab it. Auto-spin is always exactly `time * SPIN` — never touched, never
+   paused — and a drag only ever adds a temporary offset on top of that. Letting go decays
+   the offset back to zero rather than blending toward some new resting angle, so the globe
+   doesn't just stop where you left it: it eases back onto the same trajectory it would
+   have been on if you had never touched it, and carries on turning from there. */
 
 (function () {
   const TAU = Math.PI * 2;
   const RAD = Math.PI / 180;
   const FRAME_MS = 50;
   const TILT = 20 * RAD;              // looking slightly down on the equator
+  const SPIN = 0.12;                  // rad/s — the one true auto-spin rate
+  const DRAG_SENS = 0.0062;            // rad per pixel of horizontal drag
+  const RETURN = 0.9;                  // per-frame decay of a released drag offset
   const HOME = { lat: 12.9716, lon: 77.5946, name: 'Bengaluru' };
 
   class Globe {
@@ -22,7 +31,12 @@
       this.visible = true;
       this.awake = true;              // the app window is open
       this.last = 0;
+      this.offset = 0;                // radians added on top of the auto-spin
+      this.dragging = false;
+      this.dragStartX = 0;
+      this.dragBaseOffset = 0;
       this.resize();
+      this.bindDrag();
       new ResizeObserver(() => this.resize()).observe(canvas);
       new IntersectionObserver(e => { this.visible = e[0].isIntersecting; },
         { rootMargin: '80px' }).observe(canvas);
@@ -37,6 +51,26 @@
       this.c.height = Math.round(r.height * dpr);
       this.x.setTransform(dpr, 0, 0, dpr, 0, 0);
       this.last = 0;
+    }
+
+    bindDrag() {
+      const c = this.c;
+      const down = e => {
+        this.dragging = true;
+        this.dragStartX = e.clientX;
+        this.dragBaseOffset = this.offset;
+        c.setPointerCapture(e.pointerId);
+        c.classList.add('grabbing');
+      };
+      const move = e => {
+        if (!this.dragging) return;
+        this.offset = this.dragBaseOffset + (e.clientX - this.dragStartX) * DRAG_SENS;
+      };
+      const up = () => { this.dragging = false; c.classList.remove('grabbing'); };
+      c.addEventListener('pointerdown', down);
+      c.addEventListener('pointermove', move);
+      c.addEventListener('pointerup', up);
+      c.addEventListener('pointercancel', up);
     }
 
     /* lat/lon → screen, plus the z that says which side of the world it is on */
@@ -70,14 +104,18 @@
     draw(time) {
       if (!this.visible || !this.awake || !this.w) return;
       const now = time * 1000;
-      if (now - this.last < FRAME_MS) return;
+      // held or still easing back: redraw every tick so the drag feels immediate and
+      // the release doesn't visibly step. At rest this still caps at ~20fps.
+      const settling = this.dragging || Math.abs(this.offset) > 0.0005;
+      if (!settling && now - this.last < FRAME_MS) return;
       this.last = now;
+      if (!this.dragging && this.offset !== 0) this.offset *= RETURN;
 
       const g = this.x, w = this.w, h = this.h;
       g.clearRect(0, 0, w, h);
       const cx = w / 2, cy = h / 2;
       const R = Math.min(w, h) * 0.42;
-      const spin = time * 0.12;
+      const spin = time * SPIN + this.offset;
 
       // the body of the sphere, lit from the upper left
       const grad = g.createRadialGradient(cx - R * 0.35, cy - R * 0.4, R * 0.1, cx, cy, R);
@@ -140,7 +178,7 @@
   }
 
   let globe = null;
-  window.GlobeMount = function (canvas) { globe = new Globe(canvas); return globe; };
+  window.GlobeMount = function (canvas) { globe = new Globe(canvas); window.GlobeInstance = globe; return globe; };
   window.GlobeWake = function (on) { if (globe) { globe.awake = on; globe.last = 0; } };
   window.GlobeTick = function (t) { if (globe) globe.draw(t); };
 })();

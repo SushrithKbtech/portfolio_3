@@ -220,8 +220,8 @@
 
   /* coils */
   const coilOpts = {
-    stmt: { strands: 38, spin: 0.14, twist: 3, scale: 0.5, wave: true, sharp: true,
-            segs: 18, res: 3 },
+    stmt: { strands: 32, spin: 0.14, twist: 3, scale: 0.5, wave: true, sharp: true,
+            segs: 16, res: 3 },
     ring: { strands: 30, spin: 0.10, twist: 4, tilt: 1.2, light: true, scale: 0.62 },
     cta:  { strands: 30, spin: 0.18, twist: 3, tilt: 0.75 },
   };
