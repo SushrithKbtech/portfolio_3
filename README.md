@@ -7,12 +7,22 @@ orbits its own object.
 
 **The opening.** Black screen, a handwritten *Hello*, then the SK signature draws itself on
 over a technical readout — ticks, a filled track, the module being loaded and a three-digit
-percentage. The signature is three SVG paths (the S in one stroke, then the pen lifts once for
-the K's arm) revealed with `stroke-dashoffset`, and the draw is distributed by real path length
-so the pen moves at a steady rate instead of racing through the short strokes. Each stroke
-settles from acid to paper as it completes. The greeting wants *Young Coconut*, which is not on
-Google Fonts — `--script` in the tokens points at Yellowtail instead, and swapping in a licensed
+percentage. The signature is three SVG paths (the S in one stroke, then the K in its plain
+monoline form) revealed with `stroke-dashoffset`, distributed by real path length so the pen
+moves at a steady rate instead of racing through the short strokes; each stroke settles from
+acid to paper as it completes. The greeting wants *Young Coconut*, which is not on Google
+Fonts — `--script` in the tokens points at Yellowtail instead, and swapping in a licensed
 `@font-face` is a one-line change.
+
+*Hello* itself is not traced as a stroke path — Yellowtail has no single-line centerline the
+way the SK signature does, so "drawn on" here means each glyph's real fill is revealed in turn
+through a clip rect, left to right, rather than the whole word fading in at once. The reveal is
+timed off `getExtentOfChar`, so the pacing follows the actual rendered letterforms (H, then He,
+then Hel, …) instead of dividing the word into five equal fifths, and the text underneath is
+always the genuine anti-aliased glyph — nothing is ever drawn as a visible stroke outline, which
+is what keeps the texture clean through the whole reveal. If the font check on `document.fonts`
+comes back negative (a cold cache, a slow connection), it falls back to a plain fade rather than
+risk clip stops measured against the wrong font's metrics.
 
 Everything the boot panel covers has to be parked *before* it starts moving. The panel spends
 0.9s sliding up before its timeline reports complete, so anything left in its natural state is
@@ -92,7 +102,12 @@ of when you reach for it — carrying the rules rather than the CV. Everything o
 from the rest of the site, which is the whole point: the first version repeated the degree, the
 university and the year, all of which appear twice elsewhere already.
 
-**The certificate wall.** Five poster cards on cream mats. Odd ones enter from above, even
+**The globe.** The Currently window's Location app is an orthographic wireframe sphere —
+meridians and parallels with the far hemisphere simply not drawn, Bengaluru marked at its real
+coordinates, plus real coastlines from Natural Earth's 110m land dataset. Those are decoded
+from TopoJSON and simplified once, offline (`3394` points, `js/world.js`), not fetched or
+decoded in the browser — the globe works with no network call. Only ticks while its window is
+open; the rest of the time it costs nothing. Five poster cards on cream mats. Odd ones enter from above, even
 ones from below, then keep drifting past each other on scroll — the effect the reference
 gets from its award wall.
 
@@ -118,13 +133,30 @@ from the eye. The contrast is the point — a diffuse mid-grey ramp reads as rub
 good the geometry is, and depth is allowed to darken only the bottom of the ramp so the near
 wires still reach white. It also needs *short* segments: shading is averaged per stroked
 segment, and at 7 segments a strand each one spanned 51° of the ring, which washed the specular
-out completely. 18 resolves it. 2x backing store, which none of the others need.
+out completely. 18 resolves it. The backing store is capped at 1.75x device pixels rather than
+the display's true DPR — on a 2x+ Windows scale that is a real saving for a difference you
+cannot see on a soft-edged strand.
 
-Segment count is the thing to watch, and it is not linear. 38 strands x 18 segments costs
-**1.14ms a draw**; 44 x 22 — only 2.3x the segments — costs **58ms**, which is a stall you can
-feel. Stroked segments carry round caps at both ends, and past a few hundred subpaths per frame
-the rasteriser falls off a cliff. Re-measure after any change, and treat anything over ~2ms as
-a regression. Idles at 0 when off-screen.
+Every lane's colour and line width used to be rebuilt every frame — a divide, a `Math.round`,
+a `toFixed`, an `rgb()` string, up to 96 lanes, twice each (outline then fill), at 20fps. None
+of that depends on time, only on which lane a segment lands in, so it is now computed once per
+resize into lookup tables (`precompute()` in `js/coil.js`) and the draw loop just indexes in.
+The geometry itself can't be cached the same way — the object is continuously turning and
+rippling — so that part of the cost stays; this removes the part that was pure waste.
+
+Segment count is the thing to watch, and it is not linear. 38 strands × 18 segments costs
+**~2ms a draw** at a large (~860×960) backing size; 44 × 22 — only 2.3× the segments — costs
+**58ms**, which is a stall you can feel. Stroked segments carry round caps at both ends, and
+past a few hundred subpaths per frame the rasteriser falls off a cliff. `window.CoilInstances`
+exposes the live instances for exactly this: `CoilInstances.find(c => c.wave).draw(t)` in a
+timed loop measures one instance directly, without needing Lenis and ScrollTrigger to agree on
+a scroll position first. Re-measure after any change, and treat a sudden jump as a regression.
+Idles at 0 when off-screen.
+
+The hero → dark cross-fade ScrollTrigger used to call `gsap.set(selectorString, …)` on every
+scrub tick while scrolling through the hero and into this section — which re-runs
+`querySelectorAll` internally on every single call. It now queries the five target elements
+once, outside the handler, and scrubs the cached list.
 
 ## Layout
 
@@ -135,6 +167,8 @@ a regression. Idles at 0 when off-screen.
 | `js/coil.js` | the torus object, canvas 2D, light and dark themes |
 | `js/screen.js` | the hero laptop screen and its three scenes |
 | `js/game.js` | the Snake board in the contact section |
+| `js/globe.js` | the Location app's wireframe globe |
+| `js/world.js` | baked coastline data for the globe, no fetch |
 | `assets/get_icons.py` | pulls the brand icons in and colours them |
 | `js/data.js` | every fact on the page — projects, stack, achievements, certs |
 | `css/app.css` | the whole type and layout system |

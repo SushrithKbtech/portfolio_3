@@ -11,6 +11,12 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
+  // fired as early as this script runs, so by the time bootSeq measures it on window
+  // `load` the font is very likely already resolved
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load('120px Yellowtail').catch(() => {});
+  }
+
   /* index.html turns off scroll restoration before anything parses; these catch the
      cases where the browser has already moved us by the time scripts run. */
   scrollTo(0, 0);
@@ -293,11 +299,39 @@
     enterHero();
   }
 
+  /* Hello, revealed letter by letter through a clip rect rather than traced as a stroke
+     path — Yellowtail has no single-line centerline the way the SK signature does, so
+     "drawn on" here means each glyph's real fill appears in turn, left to right, instead
+     of the whole word fading in at once. getExtentOfChar gives real per-glyph boundaries
+     in the font actually rendered, so the pacing matches the letterforms rather than
+     dividing the word into five equal fifths. */
+  function initHello() {
+    const svg = $('#bootHello'), text = $('#helloText'), rect = $('#helloClipRect');
+    if (!svg || !text || !text.getExtentOfChar) return null;
+    // measuring against the wrong font gives clip stops that no longer match once
+    // Yellowtail swaps in mid-reveal — safer to fall back to a plain fade than guess
+    if (document.fonts && document.fonts.check && !document.fonts.check('120px Yellowtail')) return null;
+    const bbox = text.getBBox();
+    const pad = 6;
+    svg.setAttribute('viewBox', `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`);
+    rect.setAttribute('x', bbox.x - pad);
+    rect.setAttribute('y', bbox.y - pad);
+    rect.setAttribute('height', bbox.height + pad * 2);
+    rect.setAttribute('width', 0);
+    const stops = [];
+    for (let i = 0; i < text.textContent.length; i++) {
+      const ext = text.getExtentOfChar(i);
+      stops.push(ext.x + ext.width - (bbox.x - pad));
+    }
+    return { rect, stops };
+  }
+
   function bootSeq() {
     if (booted) return; booted = true;
     if (document.hidden) return bootSkip();       // nothing to watch — just be ready
     const fill = $('#bootFill'), pct = $('#bootPct'), task = $('#bootTask');
     const hello = $('#bootHello'), inner = $('.boot__inner');
+    const helloReveal = initHello();
     const mark = initMark();
     document.body.style.overflow = 'hidden';
     lenis?.stop();
@@ -314,9 +348,21 @@
     });
 
     /* the greeting lands first, alone on the black, then clears out of the way */
-    tl.fromTo(hello, { opacity: 0, y: 20, scale: 0.94 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'expo.out' })
-      .to(hello, { opacity: 0, y: -18, duration: 0.42, ease: 'power2.in' }, '+=0.45')
+    tl.set(hello, { y: 20, scale: 0.94 })
+      .to(hello, { y: 0, scale: 1, duration: 0.5, ease: 'power3.out' }, 0);
+    if (helloReveal) {
+      helloReveal.stops.forEach((w, i) => {
+        tl.to(helloReveal.rect, { attr: { width: w }, duration: 0.15, ease: 'power2.out' },
+          i === 0 ? 0.08 : '+=0.035');
+      });
+    } else {
+      // no clip reveal without real letter extents — open the clip and fall back to a
+      // plain fade, or the static width:0 rect in the markup hides "Hello" forever
+      const fallbackRect = $('#helloClipRect');
+      if (fallbackRect) fallbackRect.setAttribute('width', '1000');
+      tl.fromTo(hello, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power2.out' }, 0);
+    }
+    tl.to(hello, { opacity: 0, y: -18, duration: 0.42, ease: 'power2.in' }, '+=0.45')
       .to(inner, { opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.12');
 
     tl.to({ v: 0 }, {
@@ -382,13 +428,18 @@
 
   /* ══ hero → dark: a straight cross-fade, no zooming plate ═══════════════ */
   if (!REDUCED) {
+    // queried once, not on every scrub tick — this ScrollTrigger fires continuously
+    // while scrolling through the hero and into the coil just below it, and
+    // gsap.set(selectorString, ...) re-runs querySelectorAll internally each call
+    const fadeEls = $$('.hero__h, .hero__lede, .hero__meta, .hero__cue, .rig');
+    let wasDark = false;
     ScrollTrigger.create({
       trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.5,
       onUpdate: self => {
         const p = self.progress;
-        gsap.set('.hero__h, .hero__lede, .hero__meta, .hero__cue, .rig',
-          { opacity: 1 - clamp((p - 0.18) / 0.55, 0, 1) });
-        document.body.classList.toggle('is-dark', p > 0.45);
+        gsap.set(fadeEls, { opacity: 1 - clamp((p - 0.18) / 0.55, 0, 1) });
+        const dark = p > 0.45;
+        if (dark !== wasDark) { wasDark = dark; document.body.classList.toggle('is-dark', dark); }
       },
     });
   }

@@ -21,8 +21,16 @@
 
    • Redraws are capped near 20fps. The ring turns slowly enough that nobody can tell.
    • The backing store is 1x except on the hero object, where 1x aliased the strands into
-     grey fuzz — that is exactly the cost worth paying, and only once.
-   • Off-screen instances do not draw at all.                                             */
+     grey fuzz — that is exactly the cost worth paying, and only once, and even there it
+     is capped at 1.75x rather than the display's true DPR.
+   • Off-screen instances do not draw at all.
+   • Per-lane colour and line width used to be recomputed every frame — Math.round, a
+     divide, a toFixed and an rgb() string built fresh for up to 96 lanes, twice each
+     (outline then fill), at 20fps. None of that depends on time, only on which lane a
+     segment landed in, so it is now computed once per resize into lookup tables and the
+     draw loop just indexes into them. The geometry itself (segs*res points a strand,
+     every frame) can't be cached the same way — the object is continuously turning and
+     rippling — so that cost stays; this removes the cost that was pure waste.          */
 
 (function () {
   const TAU = Math.PI * 2;
@@ -72,12 +80,41 @@
       if (!r.width || !r.height) return;
       // the small background coils are soft-edged and gain nothing from HiDPI; the hero
       // object does — at 1x its strands alias into grey fuzz and it reads as pencil
-      const dpr = this.sharp ? Math.min(devicePixelRatio || 1, 2) : 1;
+      const dpr = this.sharp ? Math.min(devicePixelRatio || 1, 1.75) : 1;
       this.w = r.width; this.h = r.height;
       this.c.width = Math.round(r.width * dpr);
       this.c.height = Math.round(r.height * dpr);
       this.x.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this.lw = Math.max(1, Math.min(r.width, r.height) / 210);
+      this.precompute();
       this.last = 0;                       // force a repaint at the new size
+    }
+
+    /* every colour and width a lane can use, built once instead of every frame */
+    precompute() {
+      const lw = this.lw;
+      this.fillStyle = new Array(this.nLanes);
+      this.fillWidth = new Array(this.nLanes);
+      this.outlineWidth = new Array(this.nLanes);
+      for (let k = 0; k < this.nLanes; k++) {
+        if (this.wave) {
+          const df = ((k / LUMS) | 0) / (DEPTHS - 1);
+          const t = (k % LUMS) / (LUMS - 1);
+          const v = Math.round((12 + t * 243) * (0.5 + 0.5 * df));
+          this.fillStyle[k] = 'rgb(' + (v > 2 ? v - 2 : v) + ',' + v + ',' +
+            (v + 7 > 255 ? 255 : v + 7) + ')';
+          this.fillWidth[k] = lw * (0.86 + df * 0.46);
+          this.outlineWidth[k] = this.fillWidth[k] + lw * 0.40;
+        } else {
+          const t = k / (BUCKETS - 1);
+          let v, alpha;
+          if (this.light) { v = Math.min(210, Math.round(16 + t * 190)); alpha = 0.6 - t * 0.2; }
+          else { v = Math.min(255, Math.round(30 + t * 225)); alpha = 0.16 + t * 0.8; }
+          this.fillStyle[k] = 'rgba(' + v + ',' + v + ',' + Math.min(255, v + 5) + ',' +
+            alpha.toFixed(3) + ')';
+          this.fillWidth[k] = (0.8 + t * 2.4) * lw;
+        }
+      }
     }
 
     pt(u, v, rot, o, ph) {
@@ -128,7 +165,6 @@
       const HX = -0.2445, HY = -0.2987, HZ = 0.9226;
       const JX = 0.3367, JY = 0.1903, JZ = 0.9223;
       const total = this.segs * this.res;
-      const lw = Math.max(1, Math.min(w, h) / 210);
       const p = this._p || (this._p = {});
 
       for (let i = 0; i < this.nLanes; i++) this.lanes[i].length = 0;
@@ -203,39 +239,29 @@
         }
 
         if (this.wave) {
-          const df = ((k / LUMS) | 0) / (DEPTHS - 1);      // 0 far, 1 near
-          const t = (k % LUMS) / (LUMS - 1);               // 0 shadow, 1 specular
-          // Depth darkens, but only from the bottom of the ramp — fading the specular
-          // too is what kept the whole object at half brightness and stopped it reading
-          // as metal. The near wires go all the way to white.
-          const v = Math.round((12 + t * 243) * (0.5 + 0.5 * df));
-          // wire, not tube. Thin enough that 56 of them pack into a spring instead of
-          // a bundle of hoses, with just enough dark between to keep them separate.
-          const wid = lw * (0.86 + df * 0.46);
+          // wire, not tube: a dark outline first (wider), the lane's own colour on top —
+          // both looked up rather than rebuilt, this is the only real work left here
           g.strokeStyle = '#050506';
-          g.lineWidth = wid + lw * 0.40;
+          g.lineWidth = this.outlineWidth[k];
           g.stroke();
-          // very slightly cool, the way polished steel is
-          g.strokeStyle = 'rgb(' + (v > 2 ? v - 2 : v) + ',' + v + ',' +
-            (v + 7 > 255 ? 255 : v + 7) + ')';
-          g.lineWidth = wid;
+          g.strokeStyle = this.fillStyle[k];
+          g.lineWidth = this.fillWidth[k];
           g.stroke();
           continue;
         }
 
-        const t = k / (BUCKETS - 1);
-        let v, alpha;
-        if (this.light) { v = Math.min(210, Math.round(16 + t * 190)); alpha = 0.6 - t * 0.2; }
-        else { v = Math.min(255, Math.round(30 + t * 225)); alpha = 0.16 + t * 0.8; }
-        g.strokeStyle = 'rgba(' + v + ',' + v + ',' + Math.min(255, v + 5) + ',' + alpha.toFixed(3) + ')';
-        g.lineWidth = (0.8 + t * 2.4) * lw;
+        g.strokeStyle = this.fillStyle[k];
+        g.lineWidth = this.fillWidth[k];
         g.stroke();
       }
     }
   }
 
   const coils = [];
-  window.COIL_BUILD = 33;
+  window.COIL_BUILD = 34;
   window.CoilMount = function (canvas, opts) { const c = new Coil(canvas, opts); coils.push(c); return c; };
   window.CoilTick = function (t) { for (let i = 0; i < coils.length; i++) coils[i].draw(t); };
+  // exposed so a draw can be timed directly (c.draw(t) in a loop) without fighting
+  // Lenis/ScrollTrigger for a real scroll position first — see the README
+  window.CoilInstances = coils;
 })();
