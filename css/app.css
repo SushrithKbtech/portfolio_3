@@ -808,14 +808,15 @@ ul{margin:0;padding:0;list-style:none}
   position:relative;width:100%;height:clamp(340px,60vh,620px);
   perspective:1400px;overflow:hidden;
 }
-.batch{
+.row{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  gap:clamp(18px,3vw,64px);
+  gap:clamp(10px,1.5vw,26px);
 }
-/* height-driven: the poster fits the stage and its width follows the ratio, so it can
-   never be cropped no matter how short the viewport is */
-.batch .mat{height:100%;width:auto;will-change:transform,opacity}
-.batch .cert{height:100%;width:auto;aspect-ratio:3/4}
+/* width-driven, not height-driven — five posters side by side need to fit the stage's
+   width, and the old one-poster-tall-as-the-stage sizing would run five of them off
+   both edges */
+.row .mat{width:clamp(108px,15vw,208px);flex:0 0 auto;will-change:transform,opacity}
+.row .cert{width:100%;height:auto;aspect-ratio:3/4}
 .field__hold{
   position:relative;min-height:100svh;
   display:flex;flex-direction:column;justify-content:center;gap:clamp(24px,3.5vh,64px);
@@ -1054,11 +1055,11 @@ ul{margin:0;padding:0;list-style:none}
   .abil{position:static;opacity:1!important;transform:none!important;
     padding:11vh var(--pad) 12vh;background:var(--paper)}
   .field{height:auto;display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .batch{position:static;display:contents}
-  .batch .mat{
+  .row{position:static;display:contents}
+  .row .mat{
     width:auto;height:auto;opacity:1!important;transform:none!important;visibility:visible!important}
   /* no fixed ratio on a phone — the poster grows to whatever the text needs */
-  .batch .cert{height:auto;width:auto;aspect-ratio:auto;min-height:clamp(200px,34vh,280px)}
+  .row .cert{height:auto;width:auto;aspect-ratio:auto;min-height:clamp(200px,34vh,280px)}
   .ach__i{display:none}
   .contact{grid-template-columns:1fr;gap:44px}
   .cta__track{font-size:22vw}

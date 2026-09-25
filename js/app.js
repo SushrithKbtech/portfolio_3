@@ -25,6 +25,7 @@
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(t => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
+    window.LenisInstance = lenis;   // for direct scroll control when debugging/profiling
   }
   gsap.ticker.add(t => {
     window.CoilTick && window.CoilTick(t);
@@ -113,8 +114,8 @@
     </div>`).join('');
   $('#abilChips').innerHTML = D.chips.map(c => `<span>${c}</span>`).join('');
 
-  /* the certificates run through the pinned stage as batches of 1, 2 and 2 */
-  const BATCHES = [[0], [1, 2], [3, 4]];
+  /* all five certificates sit in one row from the start — they arrive into it one after
+     another, not batch by batch replacing each other */
   const certCard = c => `
     <div class="mat">
       <article class="cert" style="--cbg:${c.bg};--cfg:${c.fg}">
@@ -124,9 +125,7 @@
         <p class="cert__p">${c.p}</p>
       </article>
     </div>`;
-  $('#certs').innerHTML = BATCHES.map(g =>
-    `<div class="batch" data-n="${g.length}">${g.map(i => certCard(D.certs[i])).join('')}</div>`
-  ).join('');
+  $('#certs').innerHTML = `<div class="row">${D.certs.map(certCard).join('')}</div>`;
 
   /* about — the capability figure: notches on the outline, labels inside the shape */
   const fig = $('#capFig');
@@ -585,68 +584,52 @@
     scrollTrigger: { trigger: el, start: 'top 90%' },
   }));
 
-  /* The certificates arrive as pairs — the two in a row slide in from opposite edges
-     together — and the odd one out follows on its own. Then, on the way out, the whole
-     set disperses: each card is thrown outward from the centre, spun, blurred and faded,
-     which is what uncovers the skill tree underneath. */
-  const batches = $$('.field .batch');
+  /* All five certificates ride into one row, one after another — a solo card first, then
+     two pairs cascading in behind it, each dropping from the opposite side to the one
+     before it so they read as a moving train rather than five things popping in at once.
+     Once all five have landed they hold a beat, then the whole row bursts outward like a
+     fountain — each card thrown on its own diverging path, spinning and fading — while
+     Abilities fades up through exactly that same progress, so one is the other clearing. */
+  const row = $('.field .row');
 
-  if (!REDUCED && batches.length) {
-    /* The credentials act is one long pinned shot. The certificates run through it like a
-       train: a batch rides in, slows to a stop dead centre, then carries on out the far
-       side — and there is a clear gap of empty stage before the next one arrives. Inside a
-       pair the left card comes down from above and the right one rises from below, so they
-       cross at centre. When the last batch has gone, the skill tree fades up in its place
-       and the stage's ground crossfades paper → black. */
+  if (!REDUCED && row) {
     const abil = $('#abil'), hold = $('#fieldHold'), head = $('#credHead');
     let barsIn = false;
 
-    // [enter, leave] in pin progress — the space between windows is the gap
-    const WIN = [[0.00, 0.28], [0.33, 0.58], [0.63, 0.88]];
-    const NO_ENTRY = 0;      // batch 0 rides in with the page, not with the pin
-    const REVEAL = [0.88, 0.99];
-
-    const cars = [];
-    batches.forEach((el, bi) => {
-      [...el.children].forEach((card, j) => {
-        const n = el.children.length;
-        // in a pair the left card drops from above and the right one rises from below, so
-        // they cross at centre; on the way out both slide off their own side
-        const dir  = n === 1 ? 1 : (j === 0 ? -1 : 1);
-        const side = n === 1 ? 1 : (j === 0 ? -1 : 1);
-        cars.push({ card, dir, side, batch: el });
-      });
-      el.dataset.b = bi;
-    });
+    const cards = [...row.children];              // five .mat elements, already in their
+                                                    // resting flex position
+    // [start, end] of each card's own arrival, in pin progress — overlapping in pairs the
+    // way the old batches did, cascading left to right
+    const ENTER_WIN = [
+      [0.00, 0.15], [0.09, 0.24], [0.09, 0.24], [0.18, 0.33], [0.18, 0.33],
+    ];
+    // card 0 rides from below alone; each pair afterward drops from opposite sides so they
+    // cross as they arrive, same as the old train
+    const ENTER_DIR = [1, -1, 1, -1, 1];
+    const EXIT_START = 0.56;                        // hold ends, the fountain begins
+    // one outward angle per card, fanned around straight up — this is the fountain
+    const EXIT_ANGLE = [-52, -24, 0, 24, 52];
 
     const smooth = t => t * t * (3 - 2 * t);
-    const IN_END = 0.34, OUT_AT = 0.60;      // arrive · hold · leave
 
-    /* Set the opening frame synchronously. Without this the three batches all sit stacked
-       on top of each other at centre until the first scroll event lands — which is the
-       pile-up you see the moment the section first scrolls into view. */
-    batches.forEach((el, i) => { el.style.visibility = i === 0 ? 'visible' : 'hidden'; });
-    for (const car of cars) {
-      const first = car.batch === batches[0];
-      car.card.style.transform = first ? 'translate3d(0,' + (innerHeight * 0.8).toFixed(0) + 'px,0)' : '';
-      car.card.style.opacity = '0';
-    }
+    /* Set the opening frame synchronously, or all five sit stacked at rest until the first
+       scroll event lands — the pile-up you'd see the moment the section scrolls into view. */
+    cards.forEach((card, i) => {
+      card.style.opacity = '0';
+      card.style.transform = i === 0
+        ? 'translate3d(0,' + (innerHeight * 0.8).toFixed(0) + 'px,0)' : '';
+    });
 
-    /* The first certificate rides up with the page as you scroll into the section, so it
-       lands dead centre exactly as the pin takes hold — it is never just sitting there,
-       and there is never an empty stage before it. */
+    /* The first certificate rides up with the page as you scroll into the section, landing
+       in its row slot exactly as the pin takes hold — there is never an empty stage before
+       it arrives. */
     ScrollTrigger.create({
       trigger: '#fieldHold', start: 'top bottom', end: 'top top', scrub: 0.6,
       onUpdate: self => {
-        if (self.progress >= 1) return;            // from here the pin owns them
+        if (self.progress >= 1) return;             // from here the pin owns it
         const e = smooth(self.progress);
-        batches[0].style.visibility = 'visible';
-        for (const car of cars) {
-          if (car.batch !== batches[0]) continue;
-          car.card.style.transform = `translate3d(0,${((1 - e) * innerHeight * 0.8).toFixed(1)}px,0)`;
-          car.card.style.opacity = e.toFixed(3);
-          car.card.style.filter = '';
-        }
+        cards[0].style.transform = `translate3d(0,${((1 - e) * innerHeight * 0.8).toFixed(1)}px,0)`;
+        cards[0].style.opacity = e.toFixed(3);
       },
     });
 
@@ -655,36 +638,33 @@
       pin: true, scrub: 0.85,
       onUpdate: self => {
         const p = self.progress;
-        const travelY = innerHeight * 1.05;
-        const travelX = innerWidth * 0.62;
+        const travelY = innerHeight * 0.85;
 
-        batches.forEach((el, bi) => {
-          const [a, b] = WIN[bi];
-          const w = clamp((p - a) / (b - a), 0, 1);
-          const live = p > a - 0.02 && p < b + 0.02;
-          el.style.visibility = live ? 'visible' : 'hidden';
-          if (!live) return;
-
-          const inn = bi === NO_ENTRY ? 1 : smooth(clamp(w / IN_END, 0, 1));  // ride in
-          const out = smooth(clamp((w - OUT_AT) / (1 - OUT_AT), 0, 1)); // slide off
-
-          for (const car of cars) {
-            if (car.batch !== el) continue;
-            const y = car.dir * travelY * (1 - inn);
-            const x = car.side * travelX * out;
-            const r = car.side * 9 * out;
-            car.card.style.transform =
-              `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${r.toFixed(2)}deg) scale(${(1 - out * 0.14).toFixed(3)})`;
-            car.card.style.filter = out > 0.04 ? `blur(${(out * 7).toFixed(1)}px)` : '';
-            // in over the first slice, gone well before the stage edge clips it
-            const fadeIn = bi === NO_ENTRY ? 1 : smooth(clamp(w / 0.12, 0, 1));
-            car.card.style.opacity = (fadeIn * (1 - smooth(clamp(out / 0.8, 0, 1)))).toFixed(3);
+        cards.forEach((card, i) => {
+          const [a, b] = ENTER_WIN[i];
+          if (p < EXIT_START) {
+            // arriving, or holding once arrived — settled dead in its row slot
+            const e = i === 0 ? 1 : smooth(clamp((p - a) / (b - a), 0, 1));
+            card.style.transform = `translate3d(0,${(ENTER_DIR[i] * travelY * (1 - e)).toFixed(1)}px,0)`;
+            card.style.opacity = e.toFixed(3);
+            card.style.filter = '';
+            return;
           }
+          // the fountain: thrown outward on its own angle, spinning and blurring as it goes
+          const out = smooth(clamp((p - EXIT_START) / (1 - EXIT_START), 0, 1));
+          const rad = EXIT_ANGLE[i] * Math.PI / 180;
+          const dist = travelY * 1.15 * out;
+          const x = Math.sin(rad) * dist;
+          const y = -Math.cos(rad) * dist;
+          const r = EXIT_ANGLE[i] * 0.4 * out;
+          card.style.transform =
+            `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${r.toFixed(2)}deg) scale(${(1 - out * 0.16).toFixed(3)})`;
+          card.style.filter = out > 0.04 ? `blur(${(out * 7).toFixed(1)}px)` : '';
+          card.style.opacity = (1 - smooth(clamp(out / 0.85, 0, 1))).toFixed(3);
         });
 
-        head.style.opacity = (1 - smooth(clamp((p - REVEAL[0] + 0.06) / 0.1, 0, 1))).toFixed(3);
-
-        const ie = smooth(clamp((p - REVEAL[0]) / (REVEAL[1] - REVEAL[0]), 0, 1));
+        const ie = smooth(clamp((p - EXIT_START) / (1 - EXIT_START), 0, 1));
+        head.style.opacity = (1 - smooth(clamp(ie / 0.5, 0, 1))).toFixed(3);
         abil.style.opacity = ie.toFixed(3);
         abil.style.transform = `translate3d(0,${((1 - ie) * 44).toFixed(1)}px,0) scale(${(0.97 + ie * 0.03).toFixed(4)})`;
         abil.classList.toggle('on', ie > 0.5);
@@ -702,6 +682,7 @@
       },
     });
   }
+
 
 
   /* ══ CTA marquee ════════════════════════════════════════════════════════ */
