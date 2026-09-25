@@ -601,12 +601,18 @@
     // [start, end] of each card's own arrival, in pin progress — overlapping in pairs the
     // way the old batches did, cascading left to right
     const ENTER_WIN = [
-      [0.00, 0.15], [0.09, 0.24], [0.09, 0.24], [0.18, 0.33], [0.18, 0.33],
+      [0.00, 0.15], [0.09, 0.25], [0.09, 0.25], [0.19, 0.34], [0.19, 0.34],
     ];
     // card 0 rides from below alone; each pair afterward drops from opposite sides so they
     // cross as they arrive, same as the old train
     const ENTER_DIR = [1, -1, 1, -1, 1];
-    const EXIT_START = 0.56;                        // hold ends, the fountain begins
+    /* Pin is 260% long. The last pair lands at 0.34 and the fountain starts at 0.40 — a
+       ~16vh beat to see all five together. It used to be 0.33 → 0.56 on a 420% pin: almost
+       a full screen of scrolling where nothing moved, which read as dead scroll before
+       Abilities. EXIT_END leaves a short stretch with Abilities fully in before the pin
+       lets go, so it isn't scrolled away the instant it arrives. */
+    const EXIT_START = 0.40;                        // hold ends, the fountain begins
+    const EXIT_END = 0.88;                          // cards gone, Abilities fully in
     // one outward angle per card, fanned around straight up — this is the fountain
     const EXIT_ANGLE = [-52, -24, 0, 24, 52];
 
@@ -634,7 +640,7 @@
     });
 
     ScrollTrigger.create({
-      trigger: '#fieldHold', start: 'top top', end: '+=420%',
+      trigger: '#fieldHold', start: 'top top', end: '+=260%',
       pin: true, scrub: 0.85,
       onUpdate: self => {
         const p = self.progress;
@@ -651,7 +657,7 @@
             return;
           }
           // the fountain: thrown outward on its own angle, spinning and blurring as it goes
-          const out = smooth(clamp((p - EXIT_START) / (1 - EXIT_START), 0, 1));
+          const out = smooth(clamp((p - EXIT_START) / (EXIT_END - EXIT_START), 0, 1));
           const rad = EXIT_ANGLE[i] * Math.PI / 180;
           const dist = travelY * 1.15 * out;
           const x = Math.sin(rad) * dist;
@@ -663,7 +669,7 @@
           card.style.opacity = (1 - smooth(clamp(out / 0.85, 0, 1))).toFixed(3);
         });
 
-        const ie = smooth(clamp((p - EXIT_START) / (1 - EXIT_START), 0, 1));
+        const ie = smooth(clamp((p - EXIT_START) / (EXIT_END - EXIT_START), 0, 1));
         head.style.opacity = (1 - smooth(clamp(ie / 0.5, 0, 1))).toFixed(3);
         abil.style.opacity = ie.toFixed(3);
         abil.style.transform = `translate3d(0,${((1 - ie) * 44).toFixed(1)}px,0) scale(${(0.97 + ie * 0.03).toFixed(4)})`;

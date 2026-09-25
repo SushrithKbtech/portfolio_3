@@ -808,15 +808,20 @@ ul{margin:0;padding:0;list-style:none}
   position:relative;width:100%;height:clamp(340px,60vh,620px);
   perspective:1400px;overflow:hidden;
 }
+/* Centred vertically rather than inset:0, so the row's height is its tallest card and
+   `align-items:stretch` can pull every card up to it — aspect-ratio alone lets a card with
+   more text grow taller than its neighbours, which is why they came out 226/237/252px. */
 .row{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  gap:clamp(10px,1.5vw,26px);
+  position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+  display:flex;align-items:stretch;justify-content:center;
+  gap:clamp(8px,1vw,18px);
 }
-/* width-driven, not height-driven — five posters side by side need to fit the stage's
-   width, and the old one-poster-tall-as-the-stage sizing would run five of them off
-   both edges */
-.row .mat{width:clamp(108px,15vw,208px);flex:0 0 auto;will-change:transform,opacity}
-.row .cert{width:100%;height:auto;aspect-ratio:3/4}
+/* the five share the stage's width equally instead of each sitting at a fixed 15vw */
+.row .mat{
+  flex:1 1 0;min-width:0;max-width:300px;display:flex;
+  padding:clamp(9px,.9vw,16px);will-change:transform,opacity;
+}
+.row .cert{width:100%;height:auto;aspect-ratio:3/4;padding:clamp(12px,1.1vw,22px)}
 .field__hold{
   position:relative;min-height:100svh;
   display:flex;flex-direction:column;justify-content:center;gap:clamp(24px,3.5vh,64px);
